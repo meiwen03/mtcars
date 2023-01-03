@@ -1,4 +1,3 @@
-# mtcars
 library(shiny)
 library(ggplot2)
 library(dplyr)
@@ -10,6 +9,8 @@ library(RColorBrewer)
 
 #import mtcar dataset from R
 myData <- mtcars
+
+
 # Define UI for random distribution app 
 ui <- fluidPage(
   
@@ -89,7 +90,7 @@ server <- function(input, output, session){
   hp <- reactive(seq())
   
   
-  #Scatterplot of Horsepower and MPG
+  # Scatterplot of Horsepower and MPG
   output$scatterplot <- renderPlot({
     #Create a plot
     ggplot(mtcars, aes(hp, mpg)) + geom_point() +
@@ -99,7 +100,7 @@ server <- function(input, output, session){
       ggtitle("Impact of Number of Horsepower on MPG")
   })
   
-  #Scatterplot of Weight and MPG
+  # Scatterplot of Weight and MPG
   output$scatterplot2 <- renderPlot({
     #Create a plot
     ggplot(data = myData, aes(wt, mpg)) +
@@ -107,7 +108,7 @@ server <- function(input, output, session){
       ggtitle("Impact of Number of Weight on MPG")
   })
   
-  #Scatterplot og Number of Cylinder and MPG
+  # Scatterplot og Number of Cylinder and MPG
   output$scatterplot3 <- renderPlot({
     ggplot(mtcars, aes(cyl, mpg)) + geom_point() +
       geom_smooth(method = "lm", se = FALSE) +
@@ -117,7 +118,7 @@ server <- function(input, output, session){
   })
   
   
-  #Histogram of MPG
+  # Histogram of MPG
   output$histogram <- renderPlot({
     x    <- mtcars$mpg  
     bins <- seq(min(x), max(x), length.out = input$bins + 1)
@@ -125,7 +126,7 @@ server <- function(input, output, session){
     hist(x, breaks = bins, main = 'Histogram of MPG', col = 'blue', border = 'black', xlab = "MPG")
   })
   
-  #Histogram of Weight
+  # Histogram of Weight
   output$histogram2 <- renderPlot({
     y    <- mtcars$wt  
     bins <- seq(min(y), max(y), length.out = input$bins + 1)
@@ -134,7 +135,7 @@ server <- function(input, output, session){
   })
   
   
-  #Boxplot for number of cylinder
+  # Boxplot for number of cylinder
   output$boxplot <- renderPlot ({
     ggplot(mtcars, aes(factor(cyl),mpg))+
       geom_boxplot()
@@ -142,7 +143,7 @@ server <- function(input, output, session){
   
  
   
-  #Generate the average MPG using variables
+  # Generate the average MPG using variables
   check <- reactive({
     if(is.null(input$cyl) & is.null(input$gear)){
       mtcars %>% summarise(Average_mpg = mean(mpg))
@@ -172,7 +173,7 @@ server <- function(input, output, session){
   })
   
   
-  #Generate dataset
+  # Generate dataset
   
   output$MtcarsTable <- DT::renderDataTable({
     DT::datatable(mtcars, options = list(orderClasses = TRUE))
