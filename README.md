@@ -12,14 +12,14 @@ myData <- mtcars
 
 
 # Define UI for random distribution app 
-ui <- fluidPage(
+    ui <- fluidPage(
   
-  #App title
-  titlePanel("Prediction of MPG based on MTCars Dataset"),
-  #Sidebar layout with input and output definitions
-  sidebarLayout(
-    #Sidebar panel for inputs
-    sidebarPanel(
+    #App title
+    titlePanel("Prediction of MPG based on MTCars Dataset"),
+    #Sidebar layout with input and output definitions
+    sidebarLayout(
+        #Sidebar panel for inputs
+        sidebarPanel(
       
       #Defining the Input: file datatype
       fileInput("datafile", "Please upload the car file", accept = c(".csv")),
@@ -69,119 +69,119 @@ ui <- fluidPage(
 
 
 # Define server logic for random distribution app
-server <- function(input, output, session){
-  defaultData = mtcars
+    server <- function(input, output, session){
+    defaultData = mtcars
   
   
-  # Receiving the data from input
-  datasetInput <- reactive({
-    read.csv(input$datafile$datapath, header = TRUE)
-  })
+    #Receiving the data from input
+    datasetInput <- reactive({
+        read.csv(input$datafile$datapath, header = TRUE)
+    })
   
-  #Create a variable: sliderData to obtain the user inputs
-  sliderData <- reactive({
-    #make sure the inputs are not NULL
-    req(input$hp, input$wt, input$cyl, input$gear)
-    #filter the input data
-    sliderData <- filter(defaultData(), between(hp, input$hp[1], input$hp[2]))
-    return(sliderData)
-  })
+    #Create a variable: sliderData to obtain the user inputs
+    sliderData <- reactive({
+        #make sure the inputs are not NULL
+        req(input$hp, input$wt, input$cyl, input$gear)
+        #filter the input data
+        sliderData <- filter(defaultData(), between(hp, input$hp[1], input$hp[2]))
+        return(sliderData)
+    })
   
-  hp <- reactive(seq())
+    hp <- reactive(seq())
   
   
-  # Scatterplot of Horsepower and MPG
-  output$scatterplot <- renderPlot({
-    #Create a plot
-    ggplot(mtcars, aes(hp, mpg)) + geom_point() +
-      geom_smooth(method = "lm", se = FALSE) +
-      ylab("Miles per Gallon") +
-      xlab("No. of Horsepower") +
-      ggtitle("Impact of Number of Horsepower on MPG")
-  })
+  # Scatterplot of Horsepower and MPG(
+    output$scatterplot <- renderPlot({
+        #Create a plot
+        ggplot(mtcars, aes(hp, mpg)) + geom_point() +
+        geom_smooth(method = "lm", se = FALSE) +
+        ylab("Miles per Gallon") +
+        xlab("No. of Horsepower") +
+        ggtitle("Impact of Number of Horsepower on MPG")
+    }))
   
   # Scatterplot of Weight and MPG
-  output$scatterplot2 <- renderPlot({
-    #Create a plot
-    ggplot(data = myData, aes(wt, mpg)) +
-      geom_point(aes(color = cyl))+
-      ggtitle("Impact of Number of Weight on MPG")
-  })
+    output$scatterplot2 <- renderPlot({
+        #Create a plot
+        ggplot(data = myData, aes(wt, mpg)) +
+        geom_point(aes(color = cyl))+
+        ggtitle("Impact of Number of Weight on MPG")
+    })
   
-  # Scatterplot og Number of Cylinder and MPG
-  output$scatterplot3 <- renderPlot({
-    ggplot(mtcars, aes(cyl, mpg)) + geom_point() +
-      geom_smooth(method = "lm", se = FALSE) +
-      ylab("Miles per Gallon") +
-      xlab("No. of Cylinder") +
-      ggtitle("Impact of Number of Cylinder on MPG")
-  })
+  # Scatterplot of Number of Cylinder and MPG
+    output$scatterplot3 <- renderPlot({
+        ggplot(mtcars, aes(cyl, mpg)) + geom_point() +
+        geom_smooth(method = "lm", se = FALSE) +
+        ylab("Miles per Gallon") +
+        xlab("No. of Cylinder") +
+        ggtitle("Impact of Number of Cylinder on MPG")
+    })
   
   
   # Histogram of MPG
-  output$histogram <- renderPlot({
-    x    <- mtcars$mpg  
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    #Create histogram plot
-    hist(x, breaks = bins, main = 'Histogram of MPG', col = 'blue', border = 'black', xlab = "MPG")
-  })
+    output$histogram <- renderPlot({
+        x    <- mtcars$mpg  
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        #Create histogram plot
+        hist(x, breaks = bins, main = 'Histogram of MPG', col = 'blue', border = 'black', xlab = "MPG")
+    })
   
   # Histogram of Weight
-  output$histogram2 <- renderPlot({
-    y    <- mtcars$wt  
-    bins <- seq(min(y), max(y), length.out = input$bins + 1)
-    #Create histogram plot
-    hist(y, breaks = bins, main = 'Histogram of Weight', col = 'peachpuff', border = 'black', xlab = "Weight")
-  })
+    output$histogram2 <- renderPlot({
+        y    <- mtcars$wt  
+        bins <- seq(min(y), max(y), length.out = input$bins + 1)
+        #Create histogram plot
+        hist(y, breaks = bins, main = 'Histogram of Weight', col = 'peachpuff', border = 'black', xlab = "Weight")
+    })
   
   
   # Boxplot for number of cylinder
-  output$boxplot <- renderPlot ({
-    ggplot(mtcars, aes(factor(cyl),mpg))+
-      geom_boxplot()
-  })
-  
+    output$boxplot <- renderPlot ({
+        ggplot(mtcars, aes(factor(cyl),mpg))+
+        geom_boxplot()
+    })
+    
  
   
   # Generate the average MPG using variables
-  check <- reactive({
-    if(is.null(input$cyl) & is.null(input$gear)){
-      mtcars %>% summarise(Average_mpg = mean(mpg))
-    }else if(!is.null(input$cyl) & is.null(input$gear)){
-      a <- mtcars %>% group_by(cyl) %>% summarise(Average_mpg = mean(mpg))
-      a %>% filter(cyl==input$cyl)
-    }else if(is.null(input$cyl) & !is.null(input$gear)){
-      a <- mtcars %>% group_by(gear) %>% summarise(Average_mpg = mean(mpg))
-      a %>% filter(gear==input$gear)
-    }else{
-      a <-  mtcars %>% group_by(gear,cyl) %>% summarise(Average_mpg = mean(mpg))
-      a %>% filter(cyl==input$cyl & gear==input$gear)
-    }
-  })
+    check <- reactive({
+        if(is.null(input$cyl) & is.null(input$gear)){
+        mtcars %>% summarise(Average_mpg = mean(mpg))
+        }else if(!is.null(input$cyl) & is.null(input$gear)){
+        a <- mtcars %>% group_by(cyl) %>% summarise(Average_mpg = mean(mpg))
+        a %>% filter(cyl==input$cyl)
+        }else if(is.null(input$cyl) & !is.null(input$gear)){
+        a <- mtcars %>% group_by(gear) %>% summarise(Average_mpg = mean(mpg))
+        a %>% filter(gear==input$gear)
+        }else{
+        a <-  mtcars %>% group_by(gear,cyl) %>% summarise(Average_mpg = mean(mpg))
+        a %>% filter(cyl==input$cyl & gear==input$gear)
+        }
+      })
   
-  output$averageMpg <- renderTable(
-    check()
-  ) 
+    output$averageMpg <- renderTable(
+        check()
+    ) 
   
   
   
   
   # Generate data summary
-  #The Output$MtcarsSummary depends on the datasetInput reactive expression,
-  output$MtcarsSummary <-renderPrint({
-    summary(mtcars)
-  })
+    #The Output$MtcarsSummary depends on the datasetInput reactive expression,
+    output$MtcarsSummary <-renderPrint({
+        summary(mtcars)
+    })
   
   
   # Generate dataset
   
-  output$MtcarsTable <- DT::renderDataTable({
-    DT::datatable(mtcars, options = list(orderClasses = TRUE))
-  })
+    output$MtcarsTable <- DT::renderDataTable({
+        DT::datatable(mtcars, options = list(orderClasses = TRUE))
+    })
   
   
   
-}
+    }
 
 
 shinyApp(ui = ui, server = server)
